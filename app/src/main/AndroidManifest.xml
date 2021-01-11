@@ -9,15 +9,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ENotes">
+        <activity android:name=".ui.login.RegisterActivity" />
+        <activity android:name=".ui.notes.DrawingCanvas" />
+        <activity android:name=".ui.notes.ColorPicker" />
+        <activity android:name=".ui.notes.ReminderSelector" />
         <activity
-            android:name=".ui.login.LoginActivity"
-            android:label="@string/app_name">
+            android:name=".ui.notes.AddNoteActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.ENotes.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>
