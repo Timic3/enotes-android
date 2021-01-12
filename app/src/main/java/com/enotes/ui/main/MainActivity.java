@@ -48,6 +48,11 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper databaseHelper;
+    JSONArray userNotes;
+    JSONArray userItems;
+    boolean noResponse = true;
+    boolean noResponseItems = true;
+    boolean noResponseCreateNote = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +76,10 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         JSONObject result = new JSONObject(response.body().string());
-                        JSONArray array = result.getJSONArray("array");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            System.out.println(object.getInt("id"));
-                            System.out.println(object.getString("title"));
-                        }
+                        userNotes = result.getJSONArray("array");
+                        noResponse = false;
                     } catch (JSONException e) {
+                        System.out.println(e.toString());
                         Utils.toastUi(MainActivity.this, "Something went wrong, please try again!");
                     }
                 } else {
@@ -98,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
         speak();
 
+        while(noResponse){
+            //no nothing
+        }
+        populateNotes();
+
         // populate
         Cursor data = databaseHelper.data();
         while (data.moveToNext()) {
@@ -116,6 +123,88 @@ public class MainActivity extends AppCompatActivity {
         data.close();
     }
 
+    public void populateItems(){
+        try {
+            for (int i = 0; i < userNotes.length(); i++) {
+                JSONObject object = userNotes.getJSONObject(i);
+                int id = object.getInt("id");
+                String title = object.getString("title");
+                String description = object.getString("text");
+                String reminder = object.getString("reminderDate");
+                String color = object.getString("color").replaceAll("\\s+", "");
+                color = color.substring(5, color.length() - 1);
+                generateNote(id, title, description, null, modifyReminder(reminder), color, null);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void populateNotes(){
+        try {
+            for (int i = 0; i < userNotes.length(); i++) {
+                JSONObject object = userNotes.getJSONObject(i);
+                int id = object.getInt("id");
+                String title = object.getString("title");
+                String description = object.getString("text");
+                String reminder = object.getString("reminderDate");
+                String color = object.getString("color").replaceAll("\\s+", "");
+                color = color.substring(5, color.length() - 1);
+                RequestBody requestBody = new FormBody.Builder().addEncoded("noteid", id+"").build();
+                Bridge.items(requestBody, LoginRepository.get(MainActivity.this, "token"), new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Utils.toastUi(MainActivity.this, "Oops, something went wrong!");
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            try {
+                                JSONObject result = new JSONObject(response.body().string());
+                                userItems = result.getJSONArray("array");
+                                noResponseItems = false;
+                            } catch (JSONException e) {
+                                System.out.println(e.toString());
+                                Utils.toastUi(MainActivity.this, "Something went wrong, please try again!");
+                            }
+                        } else {
+                            Utils.toastUi(MainActivity.this, "Something went wrong, please try again!");
+                        }
+                    }
+                });
+
+                while(noResponseItems){ }
+
+                StringBuilder items = new StringBuilder();
+
+                for (int j = 0; j < userItems.length(); j++) {
+                    JSONObject item = userItems.getJSONObject(j);
+                    System.out.println(item);
+                    items.append(item.getString("title")).append(",");
+                }
+
+                generateNote(id, title, description, items.toString().substring(0,items.length()-1), modifyReminder(reminder), color, null);
+                noResponseItems = true;
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public String modifyReminder(String date){
+        System.out.println(date.length());
+        if(!date.equals("null")){
+            String stringDate = date+"";
+            String[] tmp = stringDate.split("T");
+            String tmp2 = tmp[1].split("\\.")[0];
+            return tmp[0]+" "+tmp2.substring(0, tmp2.length() - 3);
+        }
+        return null;
+    }
+
     public void generateDrawing(int id, Bitmap image){
         LinearLayout sv = (LinearLayout) findViewById(R.id.scrollViewLayout);
         View view = LayoutInflater.from(this).inflate(R.layout.drawing_sample,null);
@@ -131,7 +220,6 @@ public class MainActivity extends AppCompatActivity {
             ((ViewGroup) v.getParent().getParent().getParent()).removeView((View) v.getParent().getParent());
             databaseHelper.remove(id);
             Utils.toast(this, "Drawing has been removed.");
-            //remove from file
         });
 
         sv.addView(view);
@@ -140,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
     public void generateNote(int id, String title, String description, String items, String reminder, String color, Bitmap image){
         LinearLayout sv = (LinearLayout) findViewById(R.id.scrollViewLayout);
 
-        View view = LayoutInflater.from(this).inflate(R.layout.card_sample,null);
+        View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.card_sample,null);
         ViewGroup vg = (ViewGroup) view;
         ViewGroup cv = (ViewGroup) vg.getChildAt(0);
         ConstraintLayout cl = (ConstraintLayout) cv.getChildAt(0);
@@ -177,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         remove.setOnClickListener(v -> {
             ((ViewGroup) v.getParent().getParent().getParent()).removeView((View) v.getParent().getParent());
             databaseHelper.remove(id);
-            Utils.toast(this, "Note has been removed.");
+            Utils.toast(MainActivity.this, "Note has been removed.");
             //remove from file
         });
 
@@ -217,7 +305,47 @@ public class MainActivity extends AppCompatActivity {
                     Utils.toast(this, "Oops! Something went wrong.");
                 }
 
+                String type = items.equals("") ? "Normal" : "Todo";
+
+                RequestBody requestBody = new FormBody.Builder()
+                        .addEncoded("title", title)
+                        .addEncoded("type", type)
+                        .addEncoded("color", "rgba("+color+")")
+                        .addEncoded("clientX", "0")
+                        .addEncoded("clientY", "0")
+                        .addEncoded("imageURL", "https://static8.depositphotos.com/1007173/1012/i/600/depositphotos_10129093-stock-photo-note-with-pin.jpg")
+                        .addEncoded("text", description)
+                        .addEncoded("todo", items)
+                        .addEncoded("reminderDate", reminder)
+                        .build();
+                Bridge.items(requestBody, LoginRepository.get(MainActivity.this, "token"), new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Utils.toastUi(MainActivity.this, "Oops, something went wrong!");
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            try {
+                                JSONObject result = new JSONObject(response.body().string());
+                                userItems = result.getJSONArray("array");
+                                noResponseCreateNote = false;
+                            } catch (JSONException e) {
+                                System.out.println(e.toString());
+                                Utils.toastUi(MainActivity.this, "Something went wrong, please try again!");
+                            }
+                        } else {
+                            Utils.toastUi(MainActivity.this, "Something went wrong, please try again!");
+                        }
+                    }
+                });
+
+                while(noResponseCreateNote){ }
+
                 generateNote(result, title, description, items, reminder, color, image);
+
+                noResponseCreateNote = true;
             }
         }
         if(requestCode == 1000){
