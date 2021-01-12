@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import com.enotes.R;
+import com.enotes.remote.Bridge;
 import com.enotes.remote.DatabaseHelper;
 import com.enotes.remote.LoginRepository;
 import com.enotes.ui.login.LoginActivity;
@@ -27,11 +28,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import de.adorsys.android.securestoragelibrary.SecurePreferences;
 import de.adorsys.android.securestoragelibrary.SecureStorageException;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,11 +57,40 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(LoginRepository.get(MainActivity.this, "username"));
         System.out.println(LoginRepository.get(MainActivity.this, "token"));
 
-        try {
+
+        RequestBody requestBody = new FormBody.Builder()
+                .build();
+        Bridge.notes(requestBody, LoginRepository.get(MainActivity.this, "token"), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Utils.toastUi(MainActivity.this, "Oops, something went wrong!");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject result = new JSONObject(response.body().string());
+                        JSONArray array = result.getJSONArray("array");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            System.out.println(object.getInt("id"));
+                            System.out.println(object.getString("title"));
+                        }
+                    } catch (JSONException e) {
+                        Utils.toastUi(MainActivity.this, "Something went wrong, please try again!");
+                    }
+                } else {
+                    Utils.toastUi(MainActivity.this, "Something went wrong, please try again!");
+                }
+            }
+        });
+
+        /*try {
             LoginRepository.logout(MainActivity.this);
         } catch (SecureStorageException e) {
             e.printStackTrace();
-        }
+        }*/
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
