@@ -8,4 +8,3 @@ In everyday life we find ourselves in distress where we don't have access to a p
 ## Authors
 - Timotej Manfreda (63180193)
 - Jani Kačič (63180140)
-> *Student IDs will be redacted if this repository goes public*
