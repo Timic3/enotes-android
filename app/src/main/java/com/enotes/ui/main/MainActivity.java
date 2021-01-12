@@ -45,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(LoginRepository.get(MainActivity.this, "username"));
         System.out.println(LoginRepository.get(MainActivity.this, "token"));
 
-        /*try {
+        try {
             LoginRepository.logout(MainActivity.this);
         } catch (SecureStorageException e) {
             e.printStackTrace();
-        }*/
+        }
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);

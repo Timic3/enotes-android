@@ -56,8 +56,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (SecurePreferences.contains(LoginActivity.this, "token")) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
+            return;
         }
 
         setContentView(R.layout.activity_login);
@@ -122,6 +122,10 @@ public class LoginActivity extends AppCompatActivity {
                                     Utils.toastUi(LoginActivity.this, result.getString("message"));
                                     System.out.println(result.getJSONObject("user"));
                                     LoginRepository.login(LoginActivity.this, result.getJSONObject("user").getString("id"), result.getJSONObject("user").getString("username"), result.getJSONObject("user").getString("token"));
+                                    if (SecurePreferences.contains(LoginActivity.this, "token")) {
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    }
                                 } else {
                                     Utils.toastUi(LoginActivity.this, result.getString("message"));
                                 }

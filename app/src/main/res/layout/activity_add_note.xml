@@ -50,35 +50,46 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="1dp"
+        android:backgroundTint="#673AB7"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:onClick="returnNoteData"
         android:text="ADD NOTE"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button3"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button4"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="1dp"
+        android:backgroundTint="#673AB7"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:onClick="cancel"
         android:text="CANCEL"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button3" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:backgroundTint="#673AB7"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:onClick="setReminderVisible"
         android:text="ADD REMINDER"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button4"
         app:layout_constraintStart_toEndOf="@+id/button" />
 
     <TextView
@@ -100,10 +111,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="19dp"
+        android:backgroundTint="#673AB7"
         android:onClick="setColorPickVisible"
         android:text="SELECT COLOR"
+        app:cornerRadius="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextItems" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextItems"
+        app:rippleColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/colorView"
@@ -125,10 +139,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="#673AB7"
         android:onClick="requestImageCaputre"
         android:text="TAKE IMAGE"
+        app:cornerRadius="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button7" />
+        app:layout_constraintTop_toBottomOf="@+id/button7"
+        app:strokeColor="#FFFFFF" />
 
     <ImageView
         android:id="@+id/imageView"

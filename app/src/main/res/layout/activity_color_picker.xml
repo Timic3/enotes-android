@@ -9,9 +9,11 @@
     <TextView
         android:id="@+id/colorPlacer"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
+        android:layout_marginBottom="32dp"
         android:background="#FF0000"
         android:backgroundTint="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/textViewRed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="R: 255"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/colorPlacer" />
@@ -51,7 +53,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:max="255"
         android:progress="255"
@@ -90,12 +92,15 @@
 
     <Button
         android:id="@+id/button8"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="ADD COLOR"
+        android:backgroundTint="#673AB7"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:onClick="addColor"
+        android:text="ADD COLOR"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

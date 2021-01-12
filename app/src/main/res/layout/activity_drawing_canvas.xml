@@ -8,25 +8,32 @@
 
     <Button
         android:id="@+id/button11"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:backgroundTint="#673AB7"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:onClick="saveCanvas"
         android:text="SAVE DRAWING"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button12"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="1dp"
+        android:backgroundTint="#673AB7"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:onClick="cancel"
         android:text="CANCEL"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button11" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/drawingView"
