@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import com.enotes.R;
 import com.enotes.remote.DatabaseHelper;
+import com.enotes.remote.LoginRepository;
+import com.enotes.ui.login.LoginActivity;
 import com.enotes.ui.notes.AddNoteActivity;
 import com.enotes.ui.notes.DrawingCanvas;
 import com.enotes.utils.Utils;
@@ -28,6 +30,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import de.adorsys.android.securestoragelibrary.SecurePreferences;
+import de.adorsys.android.securestoragelibrary.SecureStorageException;
+
 public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper databaseHelper;
@@ -35,6 +40,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        System.out.println(LoginRepository.get(MainActivity.this, "id"));
+        System.out.println(LoginRepository.get(MainActivity.this, "username"));
+        System.out.println(LoginRepository.get(MainActivity.this, "token"));
+
+        /*try {
+            LoginRepository.logout(MainActivity.this);
+        } catch (SecureStorageException e) {
+            e.printStackTrace();
+        }*/
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
