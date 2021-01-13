@@ -107,22 +107,22 @@ public class MainActivity extends AppCompatActivity {
         populateNotes();
 
         // populate
-        /*
+
         Cursor data = databaseHelper.data();
         while (data.moveToNext()) {
-            byte[] bitmapArray = data.getBlob(7);
+            byte[] bitmapArray = data.getBlob(1);
             Bitmap bitmap = null;
             if (bitmapArray != null) {
                 bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
             }
             int id = data.getInt(0);
-            if (data.getInt(6) == 0) {
-                generateNote(id, data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5), bitmap);
-            } else {
+            //if (data.getInt(6) == 0) {
+            //    generateNote(id, data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5), bitmap);
+            //} else {
                 generateDrawing(id, bitmap);
-            }
+            //}
         }
-        data.close();*/
+        data.close();
     }
 
     public void populateNotes(){
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 //byte[] imageBytes = image.toString().getBytes();
                 //byte[] imageBytes = Base64.decode(image, Base64.DEFAULT);
                 //System.out.println(imageBytes.length);
-                Cursor cursor = databaseHelper.select(String.valueOf(id));
+                Cursor cursor = databaseHelper.select("notes", String.valueOf(id));
                 cursor.moveToNext();
                 byte[] imageBytes = cursor.getBlob(1);
                 if (imageBytes != null) {
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView remove = (ImageView) cl.getChildAt(1);
         remove.setOnClickListener(v -> {
             ((ViewGroup) v.getParent().getParent().getParent()).removeView((View) v.getParent().getParent());
-            databaseHelper.remove(id);
+            databaseHelper.remove("drawings", id);
             Utils.toast(this, "Drawing has been removed.");
         });
 
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
 
                 System.out.println("yop");
 
-                int result = databaseHelper.insert(String.valueOf(id[0]), bitmapArray);
+                int result = databaseHelper.insert("notes", String.valueOf(id[0]), bitmapArray);
                 if (result != -1) {
                     Utils.toast(this, "Note successfully added.");
                 } else {
@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 600){
             if(resultCode == RESULT_OK && data != null){
                 byte[] byteArray = (byte[]) data.getExtras().get("image");
-                int result = databaseHelper.insert("0", byteArray);
+                int result = databaseHelper.insert("drawings", null, byteArray);
                 if (result != -1) {
                     Utils.toast(this, "Drawing successfully added.");
                 } else {
