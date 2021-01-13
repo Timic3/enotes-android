@@ -2,6 +2,7 @@ package com.enotes.ui.main;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -182,7 +183,12 @@ public class MainActivity extends AppCompatActivity {
                 //System.out.println(imageBytes.length);
                 Cursor cursor = databaseHelper.select("notes", String.valueOf(id));
                 cursor.moveToNext();
-                byte[] imageBytes = cursor.getBlob(1);
+                byte[] imageBytes = null;
+                try {
+                    imageBytes = cursor.getBlob(1);
+                } catch (CursorIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
                 if (imageBytes != null) {
                     generateNote(id, title, description, itms, modifyReminder(reminder), color, BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
                 } else {
