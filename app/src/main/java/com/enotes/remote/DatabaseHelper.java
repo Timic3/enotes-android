@@ -20,18 +20,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String IMAGE = "image";
 
     public DatabaseHelper(Context context) {
-        super(context, TABLE_NAME, null, 3);
+        super(context, TABLE_NAME, null, 4);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TITLE + " TEXT, " +
-                DESCRIPTION + " TEXT, " +
-                REMINDER + " TEXT, " +
-                ITEMS + " TEXT, " +
-                COLOR + " TEXT, " +
-                ISDRAWING + " INTEGER DEFAULT 0, " +
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY, " +
                 IMAGE + " BLOB)";
         db.execSQL(createTable);
     }
@@ -42,18 +36,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public int insert(String title, String description, String reminder, String items, String color, boolean isDrawing, byte[] image) {
+    public int insert(String id, byte[] image) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(TITLE, title);
-        contentValues.put(DESCRIPTION, description);
-        contentValues.put(REMINDER, reminder);
-        contentValues.put(ITEMS, items);
-        contentValues.put(COLOR, color);
-        contentValues.put(ISDRAWING, isDrawing ? 1 : 0);
+        contentValues.put("ID", id);
         contentValues.put(IMAGE, image);
 
-        Log.d(TAG, "insert: Adding " + title + " to " + TABLE_NAME);
+        Log.d(TAG, "insert: Adding " + id + " to " + TABLE_NAME);
 
         return (int) db.insert(TABLE_NAME, null, contentValues);
     }
@@ -61,6 +50,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void remove(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, "ID=" + id, null);
+    }
+
+    public Cursor select(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE ID=" + id;
+        return db.rawQuery(query, null);
     }
 
     public Cursor data() {

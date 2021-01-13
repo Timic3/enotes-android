@@ -21,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.speech.RecognizerIntent;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -173,7 +175,19 @@ public class MainActivity extends AppCompatActivity {
                     itms = items.toString().substring(0,items.length()-1);
                 }
 
-                generateNote(id, title, description, itms , modifyReminder(reminder), color, null);
+                //byte[] imageBytes = object.getJSONObject("image").get("data").toString().getBytes(StandardCharsets.UTF_8);
+                //System.out.println(object.getJSONObject("image").get("data").toString());
+                //byte[] imageBytes = image.toString().getBytes();
+                //byte[] imageBytes = Base64.decode(image, Base64.DEFAULT);
+                //System.out.println(imageBytes.length);
+                Cursor cursor = databaseHelper.select(String.valueOf(id));
+                cursor.moveToNext();
+                byte[] imageBytes = cursor.getBlob(1);
+                if (imageBytes != null) {
+                    generateNote(id, title, description, itms, modifyReminder(reminder), color, BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
+                } else {
+                    generateNote(id, title, description, itms, modifyReminder(reminder), color, null);
+                }
                 noResponseItems = true;
             }
         }
@@ -322,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final int[] id = {0};
 
-                RequestBody requestBody = new FormBody.Builder()
+                FormBody.Builder builder = new FormBody.Builder()
                         .addEncoded("title", title)
                         .addEncoded("type", type)
                         .addEncoded("color", "rgba("+color+")")
@@ -331,8 +345,11 @@ public class MainActivity extends AppCompatActivity {
                         .addEncoded("imageURL", "https://static8.depositphotos.com/1007173/1012/i/600/depositphotos_10129093-stock-photo-note-with-pin.jpg")
                         .addEncoded("text", description)
                         .addEncoded("todo", items)
-                        .addEncoded("reminderDate", reminder.equals("") ? "null" : reminder)
-                        .build();
+                        .addEncoded("reminderDate", reminder.equals("") ? "null" : reminder);
+                if (bitmapArray != null) {
+                    builder.add("image", Base64.encodeToString(bitmapArray, Base64.DEFAULT));
+                }
+                RequestBody requestBody = builder.build();
                 Bridge.addNote(requestBody, LoginRepository.get(MainActivity.this, "token"), new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -362,6 +379,13 @@ public class MainActivity extends AppCompatActivity {
 
                 System.out.println("yop");
 
+                int result = databaseHelper.insert(String.valueOf(id[0]), bitmapArray);
+                if (result != -1) {
+                    Utils.toast(this, "Note successfully added.");
+                } else {
+                    Utils.toast(this, "Oops! Something went wrong.");
+                }
+
                 generateNote(id[0], title, description, items, reminder.equals("") ? "No reminder" : reminder, color, image);
 
                 noResponseCreateNote = true;
@@ -384,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 600){
             if(resultCode == RESULT_OK && data != null){
                 byte[] byteArray = (byte[]) data.getExtras().get("image");
-                int result = databaseHelper.insert(null, null, null, null, null, true, byteArray);
+                int result = databaseHelper.insert("0", byteArray);
                 if (result != -1) {
                     Utils.toast(this, "Drawing successfully added.");
                 } else {
