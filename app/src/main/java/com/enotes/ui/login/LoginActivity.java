@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         System.out.println(LoginRepository.get(LoginActivity.this, "id"));
         System.out.println(LoginRepository.get(LoginActivity.this, "username"));
         System.out.println(LoginRepository.get(LoginActivity.this, "token"));
@@ -57,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
         if (SecurePreferences.contains(LoginActivity.this, "token")) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
-            return;
         }
 
         setContentView(R.layout.activity_login);

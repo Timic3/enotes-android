@@ -102,4 +102,15 @@ public class Bridge {
         Call call = client.newCall(request);
         call.enqueue(callback);
     }
+
+    public static void removeNote(RequestBody requestBody, String token, Callback callback){
+        Request request = new Request.Builder()
+                .url("https://api-enotes.westeurope.cloudapp.azure.com/notes/removenote")
+                .post(requestBody)
+                .addHeader("Content-Type", "application/x-www-form-url-encoded")
+                .addHeader("Authorization", "Bearer " + token)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+    }
 }

@@ -27,7 +27,7 @@ import java.util.Locale;
 
 public class AddNoteActivity extends AppCompatActivity {
 
-    String reminder = null;
+    String reminder = "";
     String color = null;
     Bitmap bitmap = null;
 
